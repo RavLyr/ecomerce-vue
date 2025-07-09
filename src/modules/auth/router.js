@@ -1,7 +1,7 @@
 import GuestLayout from '@/layouts/GuestLayouts.vue'
 import Login from './views/Login.vue'
 import Register from './views/Register.vue'
-import Welcome from '../../views/Welcome.vue'
+import Welcome from '../products/views/Welcome.vue'
 
 
 export default [

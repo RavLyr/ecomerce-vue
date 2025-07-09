@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from '@/lib/axios'
 
 export function login(payload) {
   return axios.post('/login', payload)

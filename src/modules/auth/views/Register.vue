@@ -1,6 +1,11 @@
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '../stores/auth'
+import { ref, computed } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/modules/auth/stores/auth'
+import UIInput from '@/components/ui/Input.vue'
+import PasswordInput from '@/components/ui/PasswordInput.vue'
+import { useToast } from 'vue-toastification'
+
 
 const name = ref('')
 const email = ref('')
@@ -8,6 +13,7 @@ const password = ref('')
 const password_confirmation = ref('')
 
 const auth = useAuthStore()
+const toast = useToast()
 
 const register = async () => {
   try {
@@ -17,51 +23,65 @@ const register = async () => {
       password: password.value,
       password_confirmation: password_confirmation.value,
     })
+    toast.success('Registrasi berhasil! Selamat datang 🎉')
   } catch (error) {
-    alert('Gagal registrasi: ' + error.response?.data?.message || 'Unknown error')
+    toast.error('Gagal registrasi: ' + (error.response?.data?.message || 'Terjadi kesalahan'))
   }
 }
+
+const isFormValid = computed(() => {
+  return (
+    name.value &&
+    email.value &&
+    password.value &&
+    password_confirmation.value &&
+    password.value === password_confirmation.value
+  )
+})
 </script>
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-50">
-    <div class="w-full max-w-md p-8 bg-white rounded shadow">
-      <h2 class="text-2xl font-semibold mb-6 text-center">Register</h2>
-      <input
-        v-model="name"
-        type="text"
-        placeholder="Full Name"
-        class="mb-3 w-full p-2 border rounded"
-      />
-      <input
-        v-model="email"
-        type="email"
-        placeholder="Email"
-        class="mb-3 w-full p-2 border rounded"
-      />
-      <input
-        v-model="password"
-        type="password"
-        placeholder="Password"
-        class="mb-3 w-full p-2 border rounded"
-      />
-      <input
-        v-model="password_confirmation"
-        type="password"
-        placeholder="Confirm Password"
-        class="mb-5 w-full p-2 border rounded"
-      />
-      <button
-        @click="register"
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-      >
-        Register
-      </button>
+    <div class="w-full max-w-5xl grid md:grid-cols-2 gap-8 p-6 md:p-12shadow rounded-lg">
 
-      <p class="text-sm mt-4 text-center">
-        Already have an account?
-        <RouterLink to="/login" class="text-blue-600 underline">Login here</RouterLink>
-      </p>
+      <div class="flex flex-col items-center justify-center text-center px-4">
+        <img src="@\assets\img\register.png" alt="Mascot" class="w-full max-w-[400px] mb-6" />
+        <h3 class="text-xl text-gray-900 font-semibold mb-2">
+          Bergabung sekarang
+        </h3>
+        <p class="text-gray-600 text-sm max-w-sm">
+          Rasakan pengalaman transaksi yang simpel, cepat, dan aman bersama komunitas kami.
+        </p>
+      </div>
+
+      <div class="w-full bg-white border border-gray-200 rounded-lg shadow p-6">
+        <div class="justify-center items-center mb-6 text-center">
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">Register Now</h2>
+        </div>
+
+        <UIInput v-model="name" label="Full Name" id="name" class="mb-4" />
+        <UIInput v-model="email" label="Email" id="email" class="mb-4" />
+        <PasswordInput v-model="password" label="Password" id="password" class="mb-4" />
+        <PasswordInput v-model="password_confirmation" label="Confirm Password" id="confirmPassword" class="mb-6" />
+
+        <button @click="register" :disabled="!isFormValid"
+          class="w-full py-2 rounded font-semibold transition bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed">
+          Daftar Sekarang
+        </button>
+
+        <p class="text-sm text-center mt-4">
+          Sudah punya akun?
+          <RouterLink to="/login" class="text-blue-600 underline hover:text-blue-800">
+            Login di sini
+          </RouterLink>
+        </p>
+
+        <p class="text-xs text-gray-500 mt-4 text-center">
+          Dengan mendaftar, Anda menyetujui <span class="underline">Syarat</span> dan <span class="underline">Kebijakan
+            Privasi</span> kami.
+        </p>
+      </div>
+
     </div>
   </div>
 </template>
